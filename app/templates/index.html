@@ -8,7 +8,23 @@
         <title> Welcome to the best Blog website </title>
         {% endif %}
     </head>
-    <body>
+      {% import 'macros.html' as macro%}
+      ...
+          <body>
 
+              <h3> Popular Quotes</h3>
+              <ul>
+                  {{ macro.displayQuotesList(popular)}}
+              </ul>
+
+              <h3> Upcoming Quotes </h3>
+              <ul>
+                  {{ macro.displayQuotesList(upcoming)}}
+              </ul>
+              
+              <h3>Now Showing</h3>
+              <ul>
+                  {{ macro.displayQuotesList(now_showing)}}
+              </ul>
     </body>
 </html>
