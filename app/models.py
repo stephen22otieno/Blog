@@ -64,13 +64,13 @@ class Education(db.Model):
 
     @classmethod
     def clear_(cls):
-        Peptalk.all_pitches.clear()
+        Peptalk.all_Education.clear()
 
     # display pitches
     @classmethod
     def get_pitches(cls,id):
-        pitches = Peptalk.query.order_by(Peptalk.date_posted.desc()).filter_by(category_id=id).all()
-        return pitches
+        Education = Blog.query.order_by(Peptalk.date_posted.desc()).filter_by(category_id=id).all()
+        return Education
 
 
 
