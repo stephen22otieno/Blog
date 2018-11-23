@@ -22,7 +22,7 @@ def test():
 
 @manager.shell
 def make_shell_contex():
-        return dict(app = app, db = db, Category = Category, User = User, Peptalk = Peptalk, Comments = Comments)
+        return dict(app = app, db = db, Sport = Sport, User = User, Education = Education, Comment = Comment,Communication = Communication)
 
 if __name__ == '__main__':
     manager.run()

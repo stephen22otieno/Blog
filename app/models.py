@@ -9,42 +9,42 @@ from datetime import datetime
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class Category(db.Model):
+class Sport(db.Model):
     '''
-    Category class define category per pitch
+    Sport class define sport per sport
     '''
-    __tablename__ = 'category'
+    __tablename__ = 'sport'
 
     # add columns
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(255))
     description = db.Column(db.String(255))
     user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
-    # category = relationship("Category", back_populates="user")
+    # sport = relationship("Sport", back_populates="user")
 
     # save
-    def save_category(self):
+    def save_sport(self):
         '''
-        Function that saves a category
+        Function that saves a spory
         '''
         db.session.add(self)
         db.session.commit()
 
     @classmethod
-    def get_categories(cls):
+    def get_sports(cls):
         '''
-        Function that returns all the data from the categories after being queried
+        Function that returns all the data from the sport after being queried
         '''
-        categories = Category.query.all()
-        return categories
+        sport = Sport.query.all()
+        return sport
 
 #pitches
-class Peptalk(db.Model):
+class Education(db.Model):
 
     """
-    List of pitches in each category
+    List of blog in each blog
     """
-    all_pitches = []
+    all_blogs = []
 
     id = db.Column(db.Integer,primary_key = True)
     content = db.Column(db.String)
@@ -55,15 +55,15 @@ class Peptalk(db.Model):
 
 
 
-    def save_pitch(self):
+    def save_Education(self):
         '''
-        Save the pitches
+        Save the Education
         '''
         db.session.add(self)
         db.session.commit()
 
     @classmethod
-    def clear_pitches(cls):
+    def clear_(cls):
         Peptalk.all_pitches.clear()
 
     # display pitches
