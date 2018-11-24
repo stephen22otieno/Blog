@@ -2,98 +2,27 @@ from . import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from . import login_manager
-from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class Sport(db.Model):
-    '''
-    Sport class define sport per sport
-    '''
-    __tablename__ = 'sport'
 
-    # add columns
-    id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(255))
-    description = db.Column(db.String(255))
-    user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
-    # sport = relationship("Sport", back_populates="user")
-
-    # save
-    def save_sport(self):
-        '''
-        Function that saves a spory
-        '''
-        db.session.add(self)
-        db.session.commit()
-
-    @classmethod
-    def get_sports(cls):
-        '''
-        Function that returns all the data from the sport after being queried
-        '''
-        sport = Sport.query.all()
-        return sport
-
-#pitches
-class Education(db.Model):
-
-    """
-    List of blog in each blog
-    """
-    all_blogs = []
-
-    id = db.Column(db.Integer,primary_key = True)
-    content = db.Column(db.String)
-    date_posted = db.Column(db.DateTime,default=datetime.now)
-    user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
-    # category_id = db.Column(db.Integer,db.ForeignKey("categories.id"))
-    # comment = db.relationship("Comments", backref="peptalk", lazy = "dynamic")
-
-
-
-    def save_Education(self):
-        '''
-        Save the Education
-        '''
-        db.session.add(self)
-        db.session.commit()
-
-    @classmethod
-    def clear_(cls):
-        Peptalk.all_Education.clear()
-
-    # display pitches
-    @classmethod
-    def get_pitches(cls,id):
-        Education = Blog.query.order_by(Peptalk.date_posted.desc()).filter_by(category_id=id).all()
-        return Education
-
-
-
-#Users
-class User(UserMixin,db.Model):
-    '''
-    User class that will help to create new Users
-    '''
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
-    # add column
     id = db.Column(db.Integer,primary_key = True)
-    username = db.Column(db.String(255))
-    email=db.Column(db.String(255),unique=True,index=True)
-    password_hash=db.Column(db.String(255))
+    username = db.Column(db.String(255),unique = True)
+    email = db.Column(db.String(255),unique = True,index = True)
+    bio = db.Column(db.String(255))
+    profile_pic_path = db.Column(db.String())
     pass_secure = db.Column(db.String(255))
-    pitches = db.relationship("Peptalk", backref="user", lazy = "dynamic")
-    comment = db.relationship("Comments", backref="user", lazy = "dynamic")
+    posts = db.relationship('Post',backref = 'user',lazy = 'dynamic')
 
-    # securing our passwords
     @property
     def password(self):
-        raise AttributeError('You can not read the password Attribute')
+        raise AttributeError('You cannot read the password attribute')
 
     @password.setter
     def password(self, password):
@@ -102,33 +31,77 @@ class User(UserMixin,db.Model):
     def verify_password(self,password):
         return check_password_hash(self.pass_secure,password)
 
-
-
     def __repr__(self):
         return f'User {self.username}'
 
-#Comments
-class Comments(db.Model):
-    '''
-    Comment class that creates new comments from users in pitches
-    '''
-    __tablename__ = 'comment'
 
-    # add columns
-    id = db.Column(db. Integer,primary_key = True)
-    comment_section_id = db.Column(db.String(255))
-    date_posted = db.Column(db.DateTime,default=datetime.utcnow)
-    user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
-    # pitches_id = db.Column(db.Integer,db.ForeignKey("pitches.id"))
+class Post(db.Model):
+    __tablename__ = 'posts'
 
-    def save_comment(self):
-        '''
-        Save the comments per pitch
-        '''
+    id = db.Column(db.Integer,primary_key = True)
+    post_category = db.Column(db.String)
+    post_title = db.Column(db.String)
+    post_text = db.Column(db.String)
+    post_time = db.Column(db.DateTime, default = datetime.utcnow)
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    comments = db.relationship('Comment',backref = 'post',lazy = 'dynamic')
+    
+    def save_post(self):
         db.session.add(self)
         db.session.commit()
 
     @classmethod
-    def get_comments(self,id):
-        comment = Comments.query.order_by(Comments.date_posted.desc()).filter_by(pitches_id=id).all()
-        return comment
+    def get_posts(cls):
+        posts = Post.query.order_by(Post.post_time.desc()).all()
+        return posts
+
+    @classmethod
+    def get_user_posts(cls,user):
+        posts = Post.query.\
+            filter_by(user_id = user).\
+            order_by(Post.post_time).all()
+        return posts
+
+    @classmethod
+    def delete_post(cls,id):
+        post = Post.query.filter_by(id=id).first()
+        db.session.delete(post)
+        db.session.commit()
+
+    @classmethod
+    def get_post(cls,id):
+        post = Post.query.filter_by(id=id).first()
+        return post
+
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer,primary_key = True)
+    comment_text = db.Column(db.String)
+    comment_time = db.Column(db.DateTime, default = datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    
+    def save_comment(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_comments(cls,id):
+        comments = Comment.query.filter_by(post_id = id).all()
+        return  comments
+
+    @classmethod
+    def delete_comment(cls,id):
+        comment = Comment.query.filter_by(id=id).first()
+        db.session.delete(comment)
+        db.session.commit()
+
+
+
+class Subscriber(db.Model):
+    __tablename__ = 'subscribers'
+
+    id = db.Column(db.Integer,primary_key = True)
+    username = db.Column(db.String(255),unique = True)
+    email = db.Column(db.String(255),unique = True,index = True)
