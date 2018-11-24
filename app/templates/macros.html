@@ -1,7 +1,6 @@
 {% macro displayBlogList(blog_list) %}
 
-    {% for blog in blog_list %}
-        <li>{{ blog.title}}</li>
-    {% endfor %}
-
+{% for post in post_list %}
+<li>{{ blog.blog}}</li>
+{% endfor %}
 {% endmacro %}

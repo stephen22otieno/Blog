@@ -1,0 +1,6 @@
+
+Hello {{user.username}}!
+
+Welcome to Blog Post.
+
+Thank you for signing up. enjoy the services
