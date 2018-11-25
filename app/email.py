@@ -5,7 +5,7 @@ subject_pref = 'Blog'
 
 
 def mail_message(subject,template,to,**kwargs):
-  sender_email = 'sakwafrancis89@gmail.com'
+  sender_email = 'stephenombiro22@gmail.com'
   
   email = Message(subject,sender=sender_email,recipients=[to])
   email.body= render_template(template + '.txt',**kwargs)
